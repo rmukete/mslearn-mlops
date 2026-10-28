@@ -1,4 +1,4 @@
-name: Manually trigger an Azure Machine Learning job
+name: Run Azure Machine Learning training job
 
 on:
   workflow_dispatch:
@@ -9,12 +9,19 @@ jobs:
     steps:
     - name: Check out repo
       uses: actions/checkout@main
+
     - name: Install az ml extension
       run: az extension add -n ml -y
+
     - name: Azure login
       uses: azure/login@v2
       with:
-        creds: ${{secrets.AZURE_CREDENTIALS}}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-name: Run Azure Machine Learning training job
-run: az ml job create -f src/job.yml --stream --resource-group 
+    - name: Run Azure Machine Learning job
+      run: |
+        az ml job create \
+          --file src/job.yml \
+          --resource-group <your-resource-group-name> \
+          --workspace-name mlw-ai300-lfa61c1d486b54af2be \
+          --stream
